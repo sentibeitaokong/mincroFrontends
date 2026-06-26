@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手写 SystemJS 微前端 Demo</title>
+    <script type="systemjs-importmap">
+        {
+          "imports": {
+            "shared-store": "./shared-store.js",
+            "@micro/app-dashboard": "./apps/dashboard.js",
+            "@micro/app-orders": "./apps/orders.js"
+          }
+        }
+    </script>
+    <style>
+        :root {
+            color-scheme: light;
+            --bg: #f6f7fb;
+            --panel: #ffffff;
+            --panel-soft: #f1f5f9;
+            --text: #172033;
+            --muted: #667085;
+            --line: #d9e2ec;
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --green: #047857;
+            --orange: #b45309;
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .shell {
+            display: grid;
+            grid-template-columns: 260px minmax(0, 1fr);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: #101828;
+            color: #eef4ff;
+            padding: 24px;
+        }
+
+        .brand {
+            margin-bottom: 28px;
+        }
+
+        .brand h1 {
+            margin: 0 0 8px;
+            font-size: 20px;
+            letter-spacing: 0;
+        }
+
+        .brand p {
+            margin: 0;
+            color: #b9c4d8;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .nav {
+            display: grid;
+            gap: 10px;
+        }
+
+        .nav button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius);
+            padding: 11px 12px;
+            background: rgba(255, 255, 255, 0.06);
+            color: inherit;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .nav button:hover,
+        .nav button.active {
+            border-color: rgba(255, 255, 255, 0.32);
+            background: rgba(255, 255, 255, 0.14);
+        }
+
+        .nav span {
+            color: #9fb0ca;
+            font-size: 12px;
+        }
+
+        .content {
+            padding: 28px;
+            min-width: 0;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .topbar h2 {
+            margin: 0 0 8px;
+            font-size: 24px;
+        }
+
+        .topbar p {
+            margin: 0;
+            max-width: 780px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .status {
+            flex: 0 0 auto;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--panel);
+            padding: 10px 12px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .workspace {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 360px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .micro-container,
+        .log-panel {
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: var(--panel);
+        }
+
+        .micro-container {
+            min-height: 420px;
+            padding: 22px;
+        }
+
+        .empty-state {
+            display: grid;
+            place-items: center;
+            min-height: 370px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .empty-state strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-size: 18px;
+        }
+
+        .log-panel {
+            overflow: hidden;
+        }
+
+        .log-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--line);
+            padding: 14px 16px;
+        }
+
+        .log-title h3 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .log-title button {
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: var(--panel-soft);
+            color: var(--text);
+            cursor: pointer;
+            padding: 6px 8px;
+            font-size: 12px;
+        }
+
+        .logs {
+            display: grid;
+            gap: 8px;
+            max-height: 540px;
+            margin: 0;
+            padding: 14px 16px;
+            overflow: auto;
+            list-style: none;
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .logs li {
+            border-left: 3px solid var(--line);
+            padding-left: 8px;
+            color: #475467;
+        }
+
+        .logs li.info {
+            border-color: var(--primary);
+        }
+
+        .logs li.success {
+            border-color: var(--green);
+        }
+
+        .logs li.warn {
+            border-color: var(--orange);
+        }
+
+        .micro-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .micro-header h3 {
+            margin: 0 0 8px;
+            font-size: 22px;
+        }
+
+        .micro-header p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .badge {
+            align-self: flex-start;
+            border-radius: 999px;
+            padding: 5px 9px;
+            background: #dbeafe;
+            color: #1e40af;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .metric,
+        .table-wrap {
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            background: #ffffff;
+            padding: 14px;
+        }
+
+        .metric span {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .metric strong {
+            font-size: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid var(--line);
+            padding: 10px 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        @media (max-width: 920px) {
+            .shell,
+            .workspace {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                padding: 18px;
+            }
+
+            .content {
+                padding: 18px;
+            }
+
+            .topbar,
+            .micro-header {
+                display: block;
+            }
+
+            .status,
+            .badge {
+                display: inline-block;
+                margin-top: 12px;
+            }
+
+            .metric-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="shell">
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>Mini Micro Shell</h1>
+            <p>基于手写 MiniSystemJS 的微前端基座，动态加载远程子应用。</p>
+        </div>
+        <nav class="nav" aria-label="子应用导航">
+            <button type="button" data-app="@micro/app-dashboard" class="active">
+                经营看板
+                <span>dashboard</span>
+            </button>
+            <button type="button" data-app="@micro/app-orders">
+                订单中心
+                <span>orders</span>
+            </button>
+        </nav>
+    </aside>
+
+    <main class="content">
+        <div class="topbar">
+            <div>
+                <h2>手写 SystemJS 微前端运行过程</h2>
+                <p>基座只知道子应用名称，通过 import map 找到模块地址，再调用子应用导出的 mount 和 unmount 生命周期完成装载切换。</p>
+            </div>
+            <div class="status" id="status">等待加载</div>
+        </div>
+
+        <section class="workspace">
+            <div id="micro-app-root" class="micro-container">
+                <div class="empty-state">
+                    <div>
+                        <strong>请选择一个子应用</strong>
+                        <span>模块会在点击后按需加载并缓存。</span>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="log-panel">
+                <div class="log-title">
+                    <h3>运行日志</h3>
+                    <button type="button" id="clear-log">清空</button>
+                </div>
+                <ul class="logs" id="logs"></ul>
+            </aside>
+        </section>
+    </main>
+</div>
+
+<script src="./system/mini-system.js"></script>
+<script>
+    const root = document.getElementById('micro-app-root');
+    const status = document.getElementById('status');
+    const logs = document.getElementById('logs');
+    const navButtons = Array.from(document.querySelectorAll('[data-app]'));
+    let activeApp = null;
+
+    function addLog(message, type = 'info') {
+        const item = document.createElement('li');
+        item.className = type;
+        item.textContent = `${new Date().toLocaleTimeString()} ${message}`;
+        logs.appendChild(item);
+        logs.scrollTop = logs.scrollHeight;
+    }
+
+    window.__MICRO_LOG__ = addLog;
+    System.initImportMaps();
+    addLog('基座初始化 import map 完成', 'success');
+
+    async function loadMicroApp(appName) {
+        debugger
+        if (activeApp && activeApp.name === appName) {
+            addLog(`子应用 ${appName} 已经处于激活状态`, 'warn');
+            return;
+        }
+
+        status.textContent = `正在加载 ${appName}`;
+        navButtons.forEach(button => button.classList.toggle('active', button.dataset.app === appName));
+
+        if (activeApp && activeApp.module.unmount) {
+            addLog(`执行 ${activeApp.name} unmount 生命周期`);
+            activeApp.module.unmount(root);
+        }
+
+        addLog(`System.import("${appName}")`);
+        const microModule = await System.import(appName);
+
+        if (!microModule.mount) {
+            throw new Error(`${appName} 没有导出 mount 方法`);
+        }
+
+        addLog(`执行 ${appName} mount 生命周期`, 'success');
+        microModule.mount(root, {
+            from: 'host-shell',
+            loadedAt: new Date().toLocaleString()
+        });
+
+        activeApp = {
+            name: appName,
+            module: microModule
+        };
+        status.textContent = `当前子应用：${appName}`;
+    }
+
+    navButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            loadMicroApp(button.dataset.app).catch(error => {
+                console.error(error);
+                addLog(error.message, 'warn');
+                status.textContent = '加载失败';
+            });
+        });
+    });
+
+    document.getElementById('clear-log').addEventListener('click', () => {
+        logs.innerHTML = '';
+    });
+
+    loadMicroApp('@micro/app-dashboard');
+</script>
+</body>
+</html>
