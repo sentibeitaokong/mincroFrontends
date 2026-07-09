@@ -1,0 +1,7 @@
+.playwright-cli
+/singleSpaDemo/vue-project/node_modules
+/singleSpaDemo/vue-project/dist
+/singleSpaDemo/substrate/node_modules
+/singleSpaDemo/substrate/dist
+/singleSpaDemo/react-project/node_modules
+/singleSpaDemo/react-project/dist

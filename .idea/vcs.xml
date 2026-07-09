@@ -3,5 +3,8 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/singleSpaDemo" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/singleSpaDemo/react-project" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/singleSpaDemo/substrate" vcs="Git" />
   </component>
 </project>

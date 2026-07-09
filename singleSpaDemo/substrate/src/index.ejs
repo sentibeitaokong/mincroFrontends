@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Root Config</title>
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self' https: http://127.0.0.1:*; script-src 'unsafe-inline' 'unsafe-eval' https: http://127.0.0.1:*; connect-src https: http://127.0.0.1:* ws://127.0.0.1:* ws://localhost:*; style-src 'unsafe-inline' https:; object-src 'none';">
+    <meta name="importmap-type" use-injector/>
+    <script type="injector-importmap">
+        {
+          "imports": {
+            "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@6.0.3/lib/es2015/esm/single-spa.min.js"
+          }
+        }
+    </script>
+    <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/single-spa@6.0.3/lib/es2015/esm/single-spa.min.js">
+    <% if (isLocal) { %>
+        <script type="injector-importmap">
+            {
+              "imports": {
+                "@xb/root-config": "//127.0.0.1:9000/xb-root-config.js",
+                "@xb/react": "//127.0.0.1:8080/xb-react.js",
+                "@xb/vue": "//127.0.0.1:8082/src/spa.js",
+                "@single-spa/welcome": "https://cdn.jsdelivr.net/npm/single-spa-welcome/dist/single-spa-welcome.min.js",
+                "react": "https://esm.sh/react@19",
+                "react/jsx-runtime": "https://esm.sh/react@19/jsx-runtime",
+                "react/jsx-dev-runtime": "https://esm.sh/react@19/jsx-dev-runtime",
+                "react-dom/client": "https://esm.sh/react-dom@19/client",
+                "react-dom": "https://esm.sh/react-dom@19",
+                "vue": "//127.0.0.1:8082/node_modules/.vite/deps/vue.js",
+                "single-spa-vue": "//127.0.0.1:8082/node_modules/.vite/deps/single-spa-vue.js"
+              }
+            }
+        </script>
+    <% } %>
+
+    <script src="https://cdn.jsdelivr.net/npm/import-map-overrides@5.1.1/dist/import-map-overrides.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@single-spa/import-map-injector@2.0.1/lib/import-map-injector.js"></script>
+</head>
+<body>
+<noscript>
+    You need to enable JavaScript to run this app.
+</noscript>
+<main></main>
+<script>
+    window.importMapInjector.initPromise.then(() => {
+        import('@xb/root-config');
+    });
+</script>
+<import-map-overrides-full show-when-local-storage="devtools" dev-libs></import-map-overrides-full>
+</body>
+</html>
