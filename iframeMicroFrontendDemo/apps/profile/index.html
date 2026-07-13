@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile 子应用</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <section class="child-app">
+      <header>
+        <h1>Profile 子应用</h1>
+        <p id="state">等待主应用同步状态...</p>
+      </header>
+
+      <article class="card">
+        <h2>用户资料</h2>
+        <p id="profile-name">用户：游客</p>
+        <p id="profile-role">角色：guest</p>
+        <button id="promote-user">子应用更新用户并通知主应用</button>
+      </article>
+    </section>
+
+    <script type="module" src="./profile.js"></script>
+  </body>
+</html>

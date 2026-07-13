@@ -1,0 +1,13 @@
+{
+  "name": "iframe-micro-frontend-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "vite main --host 0.0.0.0",
+    "dev": "vite main --host 0.0.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}

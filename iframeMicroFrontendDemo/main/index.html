@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>iframe 微前端主应用</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <h1>iframe 微前端 Demo</h1>
+        <p>主应用通过 iframe 加载子应用，并使用 postMessage 做跨应用通信。</p>
+      </div>
+      <span id="active-user" class="user-badge">当前用户：游客</span>
+    </header>
+
+    <section class="toolbar">
+      <button data-app="todo" class="active">打开 Todo 子应用</button>
+      <button data-app="profile">打开 Profile 子应用</button>
+      <button id="broadcast-theme">切换主题并广播</button>
+      <button id="send-user">向子应用发送用户信息</button>
+    </section>
+
+    <main class="layout">
+      <aside class="panel">
+        <h2>主应用消息面板</h2>
+        <p>这里展示主应用收到的子应用消息。</p>
+        <ul id="message-list"></ul>
+      </aside>
+
+      <section class="micro-app-container">
+        <iframe
+          id="micro-app-frame"
+          title="micro app frame"
+          src="../apps/todo/index.html"
+        ></iframe>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

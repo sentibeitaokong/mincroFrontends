@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo 子应用</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <section class="child-app">
+      <header>
+        <h1>Todo 子应用</h1>
+        <p id="state">等待主应用同步状态...</p>
+      </header>
+
+      <div class="actions">
+        <input id="todo-input" placeholder="输入一条任务" />
+        <button id="add-todo">添加任务并通知主应用</button>
+        <button id="login-from-child">在子应用中切换用户</button>
+      </div>
+
+      <ul id="todo-list">
+        <li>学习 iframe 微前端通信</li>
+      </ul>
+    </section>
+
+    <script type="module" src="./todo.js"></script>
+  </body>
+</html>

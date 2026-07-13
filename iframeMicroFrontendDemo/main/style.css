@@ -1,0 +1,120 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #1f2937;
+  background: #f8fafc;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 32px;
+  color: white;
+  background: #111827;
+}
+
+.app-header h1 {
+  margin: 0 0 8px;
+}
+
+.app-header p {
+  margin: 0;
+  color: #cbd5e1;
+}
+
+.user-badge {
+  flex: none;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #111827;
+  background: #facc15;
+  font-weight: 700;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 32px;
+  border-bottom: 1px solid #e5e7eb;
+  background: white;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: white;
+  background: #2563eb;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+button.active {
+  background: #16a34a;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+  padding: 24px 32px;
+}
+
+.panel,
+.micro-app-container {
+  min-height: 520px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.panel {
+  padding: 20px;
+}
+
+.panel h2 {
+  margin-top: 0;
+}
+
+#message-list {
+  display: grid;
+  gap: 10px;
+  padding-left: 18px;
+}
+
+#message-list li {
+  line-height: 1.5;
+}
+
+.micro-app-container {
+  overflow: hidden;
+}
+
+iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 520px;
+  border: 0;
+}
+
+body.dark {
+  color: #e5e7eb;
+  background: #0f172a;
+}
+
+body.dark .toolbar,
+body.dark .panel,
+body.dark .micro-app-container {
+  background: #1e293b;
+  border-color: #334155;
+}
