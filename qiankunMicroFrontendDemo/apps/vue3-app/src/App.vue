@@ -11,7 +11,7 @@
       <dt>全局主题</dt>
       <dd>{{ state.theme }}</dd>
     </dl>
-
+    <img src="/img/Vue.png" alt="">
     <button @click="updateGlobalState">Vue 子应用修改全局状态</button>
   </section>
 </template>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mini Qiankun Demo</title>
+    <link rel="stylesheet" href="/main/style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div>
+        <h1>Mini Qiankun Demo</h1>
+        <p>一个精简版乾坤源码实现和使用示例。</p>
+      </div>
+      <span id="state-view">user: Guest</span>
+    </header>
+
+    <nav class="nav">
+      <a href="/vue-like">Vue-like 子应用</a>
+      <a href="/react-like">React-like 子应用</a>
+      <a href="/vanilla">Vanilla 子应用</a>
+      <button id="change-state">主应用修改全局状态</button>
+      <button id="manual-mount">手动挂载 Vanilla</button>
+      <button id="manual-unmount">手动卸载 Vanilla</button>
+    </nav>
+
+    <main class="layout">
+      <section>
+        <h2>路由子应用容器</h2>
+        <div id="micro-container" class="container"></div>
+      </section>
+      <aside>
+        <h2>loadMicroApp 手动容器</h2>
+        <div id="manual-container" class="container small"></div>
+      </aside>
+    </main>
+
+    <script type="module" src="/main/main.js"></script>
+  </body>
+</html>

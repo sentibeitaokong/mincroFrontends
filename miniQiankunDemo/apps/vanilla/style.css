@@ -1,0 +1,15 @@
+.vanilla-card {
+  padding: 20px;
+  border-radius: 14px;
+  color: #7c2d12;
+  background: #ffedd5;
+}
+
+.vanilla-card button {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: white;
+  background: #ea580c;
+  cursor: pointer;
+}

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "vite --host 0.0.0.0 --port 7103"
   },
   "dependencies": {
     "vite": "^5.4.0"

@@ -1,0 +1,15 @@
+.vue-like-card {
+  padding: 20px;
+  border-radius: 14px;
+  color: #064e3b;
+  background: #d1fae5;
+}
+
+.vue-like-card button {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: white;
+  background: #059669;
+  cursor: pointer;
+}
