@@ -1,0 +1,30 @@
+.vanilla-card {
+  padding: 24px;
+  border-radius: 14px;
+  color: #7c2d12;
+  background: #ffedd5;
+}
+
+.vanilla-card h2 {
+  margin-top: 0;
+}
+
+.vanilla-card dl {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 10px;
+}
+
+.vanilla-card dt {
+  font-weight: 700;
+}
+
+.vanilla-card button {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: white;
+  background: #ea580c;
+  cursor: pointer;
+  font-weight: 700;
+}

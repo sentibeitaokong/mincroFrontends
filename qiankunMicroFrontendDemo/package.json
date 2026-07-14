@@ -1,0 +1,20 @@
+{
+  "name": "qiankun-micro-frontend-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "install:all": "npm install --prefix main && npm install --prefix apps/vue3-app && npm install --prefix apps/react-app && npm install --prefix apps/vanilla-app",
+    "start": "concurrently \"npm run start --prefix main\" \"npm run start --prefix apps/vue3-app\" \"npm run start --prefix apps/react-app\" \"npm run start --prefix apps/vanilla-app\"",
+    "start:main": "npm run start --prefix main",
+    "start:vue": "npm run start --prefix apps/vue3-app",
+    "start:react": "npm run start --prefix apps/react-app",
+    "start:vanilla": "npm run start --prefix apps/vanilla-app"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "@vitejs/plugin-vue": "^5.1.4",
+    "concurrently": "^8.2.2",
+    "vite": "^5.4.0"
+  }
+}

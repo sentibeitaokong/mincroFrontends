@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>qiankun 主应用</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="header">
+      <div>
+        <h1>qiankun 主应用</h1>
+        <p>注册 Vue3、React 和非 webpack 构建的微应用，并演示 qiankun 常用 API。</p>
+      </div>
+      <span id="global-user">当前用户：Guest</span>
+    </header>
+
+    <nav class="nav">
+      <a href="/vue3">Vue3 子应用</a>
+      <a href="/react">React 子应用</a>
+      <a href="/vanilla">原生 JS 子应用</a>
+      <button id="toggle-user">主应用修改全局状态</button>
+      <button id="manual-mount">手动挂载 React</button>
+      <button id="manual-unmount">手动卸载 React</button>
+    </nav>
+
+    <main class="layout">
+      <section>
+        <h2>路由微应用容器</h2>
+        <div id="micro-container" class="container"></div>
+      </section>
+
+      <aside>
+        <h2>loadMicroApp 手动容器</h2>
+        <div id="manual-container" class="container small"></div>
+      </aside>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

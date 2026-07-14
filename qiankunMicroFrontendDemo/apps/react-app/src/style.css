@@ -1,0 +1,30 @@
+.react-card {
+  padding: 24px;
+  border-radius: 14px;
+  color: #1e3a8a;
+  background: #dbeafe;
+}
+
+.react-card h2 {
+  margin-top: 0;
+}
+
+.react-card dl {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 10px;
+}
+
+.react-card dt {
+  font-weight: 700;
+}
+
+.react-card button {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: white;
+  background: #2563eb;
+  cursor: pointer;
+  font-weight: 700;
+}
