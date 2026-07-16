@@ -1,0 +1,14 @@
+{
+  "name": "micro-app-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n main,react,vue -c cyan,green,magenta \"npm --prefix main run dev\" \"npm --prefix apps/react-app run dev\" \"npm --prefix apps/vue-app run dev\"",
+    "build": "npm --prefix main run build && npm --prefix apps/react-app run build && npm --prefix apps/vue-app run build",
+    "install:all": "npm install && npm --prefix main install && npm --prefix apps/react-app install && npm --prefix apps/vue-app install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

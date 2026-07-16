@@ -556,7 +556,6 @@ async function reroute() {
   if (!started) {
     return;
   }
-
   // 找出当前 URL 下应激活的所有子应用
   const activeApps = appRegistry.filter((app) => matchActiveRule(app.activeRule));
   const activeNames = new Set(activeApps.map((app) => app.name));
@@ -567,7 +566,6 @@ async function reroute() {
       await unmountApp(mountedApp);
     }
   }
-
   // 挂载新匹配且尚未挂载的子应用
   for (const app of activeApps) {
     if (!mountedApps.has(app.name)) {
