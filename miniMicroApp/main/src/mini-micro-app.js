@@ -51,6 +51,12 @@ const mainListeners = new Map()
 // 标记全局 message 监听是否已启动，确保 start() 只生效一次。
 let started = false
 
+// start() 写入的运行时配置，后续创建的所有子应用共享该配置。
+const runtimeOptions = {
+  sandbox: true,
+  sandboxPermissions: ['allow-scripts'],
+}
+
 // ============================================================
 //  工具函数
 // ============================================================
@@ -175,6 +181,80 @@ function prepareHtml(html, url, name) {
 }
 
 // ============================================================
+//  iframe 沙箱
+// ============================================================
+
+/**
+ * 基于 iframe sandbox 的子应用运行沙箱。
+ *
+ * 默认仅授予 allow-scripts：
+ * - 子应用可以执行 JavaScript；
+ * - 不授予 allow-same-origin，srcdoc 会使用独立的不透明源，无法读取主应用的
+ *   Cookie、localStorage 或 DOM；
+ * - 不授予 allow-popups / allow-top-navigation，阻止弹窗和顶层页面跳转；
+ * - 主子应用只能通过显式的 postMessage 协议通信。
+ *
+ * sandbox 属性必须在写入 srcdoc 之前设置，否则子应用可能在限制生效前执行。
+ */
+class IframeSandbox {
+  /**
+   * @param {HTMLIFrameElement} iframe - 承载子应用的 iframe
+   * @param {string[]} permissions - 需要开放的 sandbox token
+   * @param {boolean} enabled - 是否启用 iframe sandbox 限制
+   */
+  constructor(iframe, permissions = ['allow-scripts'], enabled = true) {
+    if (!(iframe instanceof HTMLIFrameElement)) {
+      throw new TypeError('IframeSandbox 需要一个 HTMLIFrameElement')
+    }
+    this.iframe = iframe
+    this.permissions = Array.from(new Set(permissions))
+    this.enabled = enabled
+    this.active = false
+    this._applyPolicy()
+  }
+
+  /** 根据 start() 配置写入或移除 iframe sandbox 属性。 */
+  _applyPolicy() {
+    if (this.enabled) this.iframe.setAttribute('sandbox', this.permissions.join(' '))
+    else this.iframe.removeAttribute('sandbox')
+  }
+
+  /** 将处理后的子应用文档放入沙箱并启动执行。 */
+  activate(html) {
+    this._applyPolicy()
+    this.active = true
+    try {
+      this.iframe.srcdoc = html
+    } catch (error) {
+      this.active = false
+      throw error
+    }
+  }
+
+  /** 仅向当前沙箱窗口发送消息。沙箱使用不透明源，因此 targetOrigin 必须为 "*"。 */
+  postMessage(message) {
+    if (!this.active) return
+    this.iframe.contentWindow?.postMessage(message, '*')
+  }
+
+  /** 判断 message 事件是否确实来自当前沙箱。 */
+  isMessageSource(source) {
+    return this.active && source === this.iframe.contentWindow
+  }
+
+  /**
+   * 停止并释放沙箱文档。
+   * 必须先移除 srcdoc；srcdoc 的优先级高于 src，只设置 about:blank 无法可靠卸载它。
+   */
+  deactivate() {
+    if (!this.active) return
+    this.active = false
+    this.iframe.removeAttribute('srcdoc')
+    this.iframe.src = 'about:blank'
+  }
+}
+
+// ============================================================
 //  自定义元素：<mini-micro-app>
 // ============================================================
 
@@ -205,6 +285,12 @@ class MiniMicroAppElement extends HTMLElement {
       '<style>:host{display:block;width:100%;height:100%;min-height:1px}iframe{display:block;width:100%;height:100%;min-height:1px;border:0}</style>' +
       '<iframe title="micro app" loading="eager"></iframe>'
     this._iframe = this.shadowRoot.querySelector('iframe')
+    // 沙箱是否启用及其权限由 start() 统一配置。
+    this._sandbox = new IframeSandbox(
+      this._iframe,
+      runtimeOptions.sandboxPermissions,
+      runtimeOptions.sandbox,
+    )
   }
 
   /**
@@ -275,7 +361,7 @@ class MiniMicroAppElement extends HTMLElement {
           const message = event.data
           // 同时校验消息来源（contentWindow）、协议（CHANNEL）和应用名，
           // 防止其他 iframe 冒充当前子应用。
-          if (event.source !== this._iframe.contentWindow || !message ||
+          if (!this._sandbox.isMessageSource(event.source) || !message ||
               message.channel !== CHANNEL || message.type !== BRIDGE_READY || message.appName !== name) return
           this._ready = true
           // 桥接就绪后立即发送等待中的数据。
@@ -286,11 +372,7 @@ class MiniMicroAppElement extends HTMLElement {
           finish()
         }
         window.addEventListener('message', onMessage)
-        // sandbox="allow-scripts"：授予脚本执行权限，
-        // 但不授予 allow-same-origin，使子应用运行在独立的不透明源中，
-        // 避免子应用访问主应用的 Cookie、localStorage 等。
-        this._iframe.setAttribute('sandbox', 'allow-scripts')
-        this._iframe.srcdoc = prepareHtml(html, this.appUrl, name)
+        this._sandbox.activate(prepareHtml(html, this.appUrl, name))
       })
     })()
     return this._loadPromise
@@ -302,7 +384,7 @@ class MiniMicroAppElement extends HTMLElement {
    * @param {*} data - 要发送的数据
    */
   _postData(data) {
-    this._iframe.contentWindow?.postMessage({ channel: CHANNEL, type: PARENT_DATA, data }, '*')
+    this._sandbox.postMessage({ channel: CHANNEL, type: PARENT_DATA, data })
   }
 
   /**
@@ -357,10 +439,10 @@ class MiniMicroAppElement extends HTMLElement {
    * 调用时机：元素从 DOM 中移除时自动调用，或通过 unmountApp() 手动触发。
    */
   destroy() {
-    if (this._iframe?.contentWindow) {
+    if (this._sandbox.active) {
       // 先通知子应用执行卸载钩子，再清空 iframe 文档。
-      this._iframe.contentWindow.postMessage({ channel: CHANNEL, type: PARENT_UNMOUNT }, '*')
-      this._iframe.src = 'about:blank'
+      this._sandbox.postMessage({ channel: CHANNEL, type: PARENT_UNMOUNT })
+      this._sandbox.deactivate()
     }
     this._ready = false
     this._loadPromise = null
@@ -392,7 +474,7 @@ function handleMessage(event) {
   if (!message || message.channel !== CHANNEL || message.type !== CHILD_DATA) return
   // 校验消息来源：必须来自已挂载应用的 iframe contentWindow。
   const element = mountedApps.get(message.appName)
-  if (!element || event.source !== element.shadowRoot?.querySelector('iframe')?.contentWindow) return
+  if (!element || !element._sandbox.isMessageSource(event.source)) return
   // 1. 通知主应用侧注册的全局数据监听器。
   const listeners = mainListeners.get(message.appName)
   listeners?.forEach((listener) => { try { listener(message.data) } catch (_) {} })
@@ -407,12 +489,20 @@ function handleMessage(event) {
 /**
  * 启动微前端运行时。
  *
- * 注册全局 message 事件监听器，用于接收所有子应用的数据上报。
+ * 配置 iframe 沙箱，并注册全局 message 事件监听器。
+ * 默认启用沙箱且只开放 allow-scripts；可通过 sandboxPermissions 指定权限。
  * 只需调用一次，重复调用无副作用。
  * 应在注册和挂载应用之前调用。
+ *
+ * @param {{sandbox?: boolean, sandboxPermissions?: string[]}} options - 运行时配置
  */
-export function start() {
+export function start(options = {}) {
   if (started || typeof window === 'undefined') return
+  const { sandbox = true, sandboxPermissions = ['allow-scripts'] } = options
+  runtimeOptions.sandbox = sandbox !== false
+  runtimeOptions.sandboxPermissions = Array.isArray(sandboxPermissions)
+    ? Array.from(new Set(sandboxPermissions))
+    : ['allow-scripts']
   started = true
   window.addEventListener('message', handleMessage)
 }
@@ -542,7 +632,7 @@ export function getRegisteredApps() { return Array.from(registeredApps.values())
 export function getMountedApps() { return Array.from(mountedApps.keys()) }
 
 // 导出自定义元素类，便于外部继承或直接使用。
-export { MiniMicroAppElement }
+export { IframeSandbox, MiniMicroAppElement }
 
 // 默认导出：将所有 API 聚合为一个对象，方便整体导入。
 export default { start, registerApp, mountApp, mountMicroApp, unmountApp, setData, addDataListener, removeDataListener, getRegisteredApps, getMountedApps }
