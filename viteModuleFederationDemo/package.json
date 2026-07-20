@@ -1,0 +1,24 @@
+{
+  "name": "vite-module-federation-demo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "host",
+    "remote"
+  ],
+  "scripts": {
+    "dev": "npm run build:remote && concurrently -k -n remote-watch,remote,host -c yellow,magenta,cyan \"npm --workspace remote run build -- --watch\" \"npm --workspace remote run preview\" \"npm --workspace host run dev\"",
+    "dev:host": "npm --workspace host run dev",
+    "dev:remote": "npm --workspace remote run build && npm --workspace remote run preview",
+    "build": "npm run build:remote && npm run build:host",
+    "build:host": "npm --workspace host run build",
+    "build:remote": "npm --workspace remote run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+

@@ -1,0 +1,21 @@
+:root {
+  color: #172033;
+  background: #f5f3ff;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button { font: inherit; }
+
+.remote-page {
+  width: min(820px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 60px 0;
+}
+
+.remote-intro { margin-bottom: 28px; }
+.remote-intro span { color: #7c3aed; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.16em; }
+.remote-intro h1 { margin: 8px 0; font-size: 2.5rem; letter-spacing: -0.04em; }
+.remote-intro p { margin: 0; color: #64748b; }

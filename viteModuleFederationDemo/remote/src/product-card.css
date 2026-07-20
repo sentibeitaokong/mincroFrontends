@@ -1,0 +1,190 @@
+.product-card {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) 1.1fr;
+  overflow: hidden;
+  min-height: 330px;
+  border: 1px solid #e4e6ed;
+  border-radius: 28px;
+  background: white;
+  box-shadow: 0 16px 50px rgb(23 32 51 / 8%);
+}
+
+.product-visual {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  min-height: 330px;
+  place-items: center;
+  background: linear-gradient(145deg, #dcd6ff, #a291ff);
+}
+
+.product-visual::before {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 50%;
+  content: "";
+}
+
+.product-orbit {
+  position: absolute;
+  width: 330px;
+  height: 110px;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 50%;
+  transform: rotate(-23deg);
+}
+
+.headphones {
+  position: relative;
+  z-index: 1;
+  width: 150px;
+  height: 155px;
+  border: 22px solid #20263a;
+  border-bottom: 0;
+  border-radius: 80px 80px 20px 20px;
+  filter: drop-shadow(0 24px 18px rgb(65 47 145 / 30%));
+}
+
+.headphones span,
+.headphones i {
+  position: absolute;
+  top: 76px;
+  width: 40px;
+  height: 72px;
+  border: 7px solid #353c52;
+  border-radius: 18px;
+  background: #171c2d;
+}
+
+.headphones span {
+  left: -37px;
+}
+
+.headphones i {
+  right: -37px;
+}
+
+.headphones b {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  width: 62px;
+  height: 9px;
+  border-radius: 8px;
+  background: #596078;
+  transform: translateX(-50%);
+}
+
+.source-label {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  padding: 7px 10px;
+  border: 1px solid rgb(255 255 255 / 50%);
+  border-radius: 999px;
+  color: white;
+  background: rgb(38 28 88 / 28%);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.product-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(32px, 6vw, 68px);
+}
+
+.product-kicker {
+  color: #7660ef;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+}
+
+.product-content h3 {
+  margin: 14px 0;
+  color: #172033;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.product-content p {
+  max-width: 480px;
+  margin: 0;
+  color: #737b8d;
+  line-height: 1.7;
+}
+
+.product-meta {
+  display: flex;
+  gap: 24px;
+  align-items: end;
+  justify-content: space-between;
+  margin-top: 34px;
+}
+
+.product-meta div {
+  display: grid;
+  gap: 3px;
+}
+
+.product-meta small {
+  color: #9298a6;
+}
+
+.product-meta strong {
+  color: #172033;
+  font-size: 1.8rem;
+  letter-spacing: -0.04em;
+}
+
+.product-meta button {
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 13px;
+  color: white;
+  background: #6f57ed;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgb(111 87 237 / 28%);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.product-meta button:hover {
+  box-shadow: 0 14px 30px rgb(111 87 237 / 38%);
+  transform: translateY(-2px);
+}
+
+.product-meta button:focus-visible {
+  outline: 3px solid rgb(111 87 237 / 30%);
+  outline-offset: 3px;
+}
+
+@media (max-width: 700px) {
+  .product-card {
+    grid-template-columns: 1fr;
+  }
+
+  .product-visual {
+    min-height: 280px;
+  }
+
+  .product-content {
+    padding: 34px 26px;
+  }
+
+  .product-meta {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+

@@ -1,0 +1,67 @@
+:root {
+  color: #172033;
+  background: #eff1f7;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button {
+  font: inherit;
+}
+
+.remote-page {
+  width: min(980px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 72px 0;
+}
+
+.remote-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.remote-heading p {
+  margin: 0 0 10px;
+  color: #7660ef;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+}
+
+.remote-heading h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  letter-spacing: -0.06em;
+}
+
+.remote-heading span {
+  padding: 9px 13px;
+  border-radius: 999px;
+  color: #5d4bd0;
+  background: #e4e0ff;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+@media (max-width: 600px) {
+  .remote-heading {
+    align-items: start;
+    gap: 22px;
+    flex-direction: column;
+  }
+}
+
