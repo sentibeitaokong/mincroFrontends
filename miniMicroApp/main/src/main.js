@@ -10,10 +10,9 @@
 import {
   start,
   mountMicroApp,
-  unmountApp,
   setData,
   addDataListener,
-} from './mini-micro-app.js'
+} from './mini-micro-app/index.js'
 
 // =========================================================
 //  启动 Mini Micro App 框架
@@ -61,7 +60,12 @@ async function mountChildApp(name) {
   if (!app || !container) return
 
   try {
-    await mountMicroApp(container, app)
+    await mountMicroApp(container, app, {
+      from: 'main',
+      message: `${app.label} 初始化完成`,
+      updatedAt: new Date().toLocaleTimeString(),
+      appName: app.name,
+    })
     console.log(`[主应用] 子应用 "${name}" 挂载成功`)
   } catch (err) {
     console.error(`[主应用] 子应用 "${name}" 挂载失败:`, err)
@@ -76,17 +80,13 @@ async function mountChildApp(name) {
  * 切换到指定子应用
  *
  * 实现方式：
- *   两个 div 容器同时存在于 DOM 中，通过 display 切换。
- *   切换时挂载新应用、卸载旧应用。
+ *   两个子应用始终同时挂载，通过 display 切换可见区域并保留内部状态。
  *
  * @param {string} name
  */
 async function switchApp(name) {
   const nextApp = apps.find((app) => app.name === name)
   if (!nextApp || nextApp.name === currentAppName) return
-
-  // 卸载当前子应用
-  await unmountApp(currentAppName)
 
   // 更新状态
   currentAppName = nextApp.name
@@ -103,9 +103,6 @@ async function switchApp(name) {
 
   // 更新顶栏标签
   document.querySelector('#current-app-label').textContent = nextApp.label
-
-  // 挂载新子应用
-  await mountChildApp(nextApp.name)
 
   // 下发数据
   setData(nextApp.name, {
@@ -258,13 +255,7 @@ renderShell()
 // 注册子应用消息监听
 registerChildListeners()
 
-// 挂载初始子应用
-mountChildApp(apps[0].name)
-
-// 下发初始数据
-setData(apps[0].name, {
-  from: 'main',
-  message: '初始数据加载完毕',
-  updatedAt: new Date().toLocaleTimeString(),
-  appName: apps[0].name,
+// 两个子应用一次性并行挂载，导航切换不会销毁它们的状态。
+Promise.all(apps.map((app) => mountChildApp(app.name))).catch((error) => {
+  console.error('[主应用] 子应用初始化失败', error)
 })

@@ -3,9 +3,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-// 注意：base 必须设置为 "/"，让 Micro App 自动拼接子应用的完整资源地址。
-// 如果设为完整 URL (http://localhost:3002/)，MicroApp 无法正确重写 HTML 中的资源路径，
-// 会导致子应用 JS 在顶层 window 执行，覆盖主应用内容。
+// 保留根路径，极简运行时会用子应用入口地址注入 base 并解析资源。
 export default defineConfig({
   base: '/',
   plugins: [
