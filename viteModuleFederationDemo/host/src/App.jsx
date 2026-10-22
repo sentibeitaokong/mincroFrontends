@@ -35,7 +35,7 @@ export default function App() {
             </p>
           </div>
           <div className="architecture" aria-label="应用架构">
-            <span>Host :5173</span>
+            <span>Host :5180</span>
             <i>runtime import</i>
             <span>Remote :4174</span>
           </div>

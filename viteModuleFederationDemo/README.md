@@ -3,7 +3,7 @@
 一个由 Vite 驱动的 React 模块联邦示例，使用
 [`@originjs/vite-plugin-federation`](https://github.com/originjs/vite-plugin-federation)：
 
-- **Host**：页面框架与购物车状态，开发地址为 <http://localhost:5173>。
+- **Host**：页面框架与购物车状态，开发地址为 <http://localhost:5180>。
 - **Remote**：暴露商品卡片，并可独立预览，地址为 <http://localhost:4174>。
 - **Shared**：`react` 和 `react-dom` 配置为共享单例。
 
@@ -21,7 +21,7 @@ Host 开发服务。之所以采用这个流程，是因为该联邦插件的 Re
 
 打开以下地址：
 
-- Host：<http://localhost:5173>
+- Host：<http://localhost:5180>
 - Remote 独立页面：<http://localhost:4174>
 - 联邦入口：<http://localhost:4174/assets/remoteEntry.js>
 
